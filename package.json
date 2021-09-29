@@ -1,34 +1,28 @@
 {
-  "name": "my-webpack-project",
+  "name": "perf-eval",
+  "type": "module",
   "version": "1.0.0",
-  "description": "My webpack project",
+  "description": "Performance evaluation of several working solutions to a Codility test",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode=production --node-env=production",
-    "build:dev": "webpack --mode=development",
-    "build:prod": "webpack --mode=production --node-env=production",
-    "watch": "webpack --watch"
+    "test": "node ./index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xari/micro-state.git"
+    "url": "git+https://github.com/xari/perf-eval.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/xari/micro-state/issues"
+    "url": "https://github.com/xari/perf-eval/issues"
   },
-  "homepage": "https://github.com/xari/micro-state#readme",
+  "homepage": "https://github.com/xari/perf-eval#readme",
   "devDependencies": {
-    "@babel/core": "^7.15.5",
-    "@babel/plugin-proposal-pipeline-operator": "^7.15.0",
-    "@babel/preset-env": "^7.15.6",
-    "@webpack-cli/generators": "^1.1.0",
-    "babel-loader": "^8.2.2",
-    "html-webpack-plugin": "^5.3.2",
-    "webpack": "^5.53.0",
-    "webpack-cli": "^4.8.0"
+    "jest": "^24.9.0"
+  },
+  "dependencies": {
+    "benchmark": "^2.1.4",
+    "node": "^16.10.0"
   }
 }
