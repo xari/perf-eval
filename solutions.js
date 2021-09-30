@@ -1,11 +1,9 @@
-// 100% correctness, 100% performance, task score 100%
 function solution_reduce(A) {
   return A.filter((n) => n > 0)
     .sort((a, b) => a - b)
     .reduce((prev, n, i) => (n === prev ? n + 1 : prev), 1);
 }
 
-// 100% correctness, 100% performance, task score 100%
 function solution_reduce_with_eject(A) {
   return A.filter((n) => n > 0)
     .sort((a, b) => a - b)
@@ -19,7 +17,6 @@ function solution_reduce_with_eject(A) {
     }, 1);
 }
 
-// 100% correctness, 100% performance, task score 100%
 function solution_forEach(A) {
   let x = 1;
 
@@ -35,7 +32,6 @@ function solution_forEach(A) {
   return x;
 }
 
-// 100% correctness, 100% performance, task score 100%
 function solution_for(A) {
   A = A.filter((x) => x >= 1).sort((a, b) => a - b);
 
@@ -52,7 +48,6 @@ function solution_for(A) {
   return x;
 }
 
-// 100% correctness, 100% performance, task score 100%
 // This solution was taken from the StackOverflow answer below:
 // https://stackoverflow.com/a/56969919
 function solution_for_of(A) {
