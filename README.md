@@ -11,7 +11,7 @@ From the challenge description...
 > - N is an integer within the range [1..100,000];
 > - each element of array A is an integer within the range [−1,000,000..1,000,000].
 
-The five solution approaches (`solution_for`, `solution_forEach`, `solution_reduce`, `solution_reduce_with_eject`, `solution_for_of`) can be found in `solutions.js`.
+The five approaches (`solution_for`, `solution_forEach`, `solution_reduce`, `solution_reduce_with_eject`, `solution_for_of`) can be found in `solutions.js`.
 You can run the tests for yourself using the commands below.
 
 ```
