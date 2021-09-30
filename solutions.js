@@ -1,14 +1,14 @@
-// 80% correctness, 0% performance, task score 44%
+// 100% correctness, 100% performance, task score 100%
 function solution_reduce(A) {
   return A.filter((n) => n > 0)
-    .sort()
+    .sort((a, b) => a - b)
     .reduce((prev, n, i) => (n === prev ? n + 1 : prev), 1);
 }
 
-// 80% correctness, 0% performance, task score 44%
+// 100% correctness, 100% performance, task score 100%
 function solution_reduce_with_eject(A) {
   return A.filter((n) => n > 0)
-    .sort()
+    .sort((a, b) => a - b)
     .reduce((prev, n, i, arr) => {
       // This part feels a bit hacky,
       // but it will early eject from the reduce
@@ -19,12 +19,12 @@ function solution_reduce_with_eject(A) {
     }, 1);
 }
 
-// 80% correctness, 0% performance, task score 44%
+// 100% correctness, 100% performance, task score 100%
 function solution_forEach(A) {
   let x = 1;
 
   A.filter((n) => n > 0)
-    .sort()
+    .sort((a, b) => a - b)
     .forEach((n) => {
       if (x < n) {
         return x;
@@ -53,6 +53,8 @@ function solution_for(A) {
 }
 
 // 100% correctness, 100% performance, task score 100%
+// This solution was taken from the StackOverflow answer below:
+// https://stackoverflow.com/a/56969919
 function solution_for_of(A) {
   A = A.filter((x) => x >= 1).sort((a, b) => a - b);
 
@@ -68,10 +70,10 @@ function solution_for_of(A) {
   return x;
 }
 
-export {
+export default [
   solution_for,
   solution_forEach,
   solution_reduce,
   solution_reduce_with_eject,
   solution_for_of,
-};
+];

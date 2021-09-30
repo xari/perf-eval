@@ -1,83 +1,84 @@
 import Benchmark from "benchmark";
+import chalk from "chalk";
+import Solutions from "./solutions.js";
 
-import {
-  solution_for,
-  solution_forEach,
-  solution_reduce,
-  solution_reduce_with_eject,
-  solution_for_of,
-} from "./solutions.js";
+// Returns the input if the test doesn't pass.
+const expect = (fn, input, expected, label) => {
+  const result = fn(input);
 
-const test = (fn, A, n) => fn(A) === n;
+  return result === expected ? null : result;
+};
 
-const smallerArrayBenchmark = new Benchmark.Suite();
-const smallerArray = [1, 3, 6, 4, 1, 2];
-const smallerValidation = 5;
+const runUnitTests = (testCases) =>
+  Solutions.map((test) => ({
+    name: test.name,
+    result: testCases.filter(({ input, validate_with }) =>
+      expect(test, input, validate_with)
+    ),
+  })).forEach(({ name, result }) =>
+    result.length
+      ? console.error(chalk.red(`Something isn't right with ${name}.`))
+      : console.log(chalk.green(`All clear for ${name}`))
+  );
 
-smallerArrayBenchmark
-  .add("for loop", function () {
-    test(solution_for, smallerArray, smallerValidation);
-  })
-  .add("for...of", function () {
-    test(solution_for_of, smallerArray, smallerValidation);
-  })
-  .add("Array.reduce (without early eject)", function () {
-    test(solution_reduce, smallerArray, smallerValidation);
-  })
-  .add("Array.reduce (with early eject)", function () {
-    test(solution_reduce_with_eject, smallerArray, smallerValidation);
-  })
-  .add("Array.forEach", function () {
-    test(solution_forEach, smallerArray, smallerValidation);
-  })
-  // add listeners
-  .on("cycle", function (event) {
-    console.log(String(event.target));
-  })
-  .on("complete", function () {
-    console.log(
-      `Using the smaller array, the fastest solution is the ${this.filter(
-        "fastest"
-      ).map("name")}.`
-    );
-  })
-  .run();
+const runBenchmark = ({ input, validate_with }) => {
+  const benchmark = new Benchmark.Suite();
 
-const largerArrayBenchmark = new Benchmark.Suite();
-const largerArray = Array.from({ length: 1000 }, (_, i) => i + 3600);
-const largerValidation = 3701;
+  Solutions.forEach((solution) =>
+    benchmark.add(solution.name, () => expect(solution, input, validate_with))
+  );
 
-largerArrayBenchmark
-  .add("for loop", function () {
-    test(solution_for, largerArray, largerValidation);
-  })
-  .add("for...of", function () {
-    test(solution_for_of, largerArray, largerValidation);
-  })
-  .add("Array.reduce (without early eject)", function () {
-    test(solution_reduce, largerArray, largerValidation);
-  })
-  .add("Array.reduce (with early eject)", function () {
-    test(solution_reduce_with_eject, largerArray, largerValidation);
-  })
-  .add("Array.forEach", function () {
-    test(solution_forEach, largerArray, largerValidation);
-  })
-  // add listeners
-  .on("cycle", function (event) {
-    console.log(String(event.target));
-  })
-  .on("complete", function () {
-    console.log(
-      `Using the larger array, the fastest solution is the ${this.filter(
-        "fastest"
-      ).map("name")}.`
-    );
-  })
-  .run();
+  benchmark
+    .on("cycle", function (event) {
+      console.log(String(event.target));
+    })
+    .on("complete", function () {
+      console.log(
+        `According to the benchmark, the most performant solution seems to be the ${this.filter(
+          "fastest"
+        ).map("name")}.`
+      );
+    })
+    .run();
+};
 
-// test([1, 3, 6, 4, 1, 2], 5) |> console.log;
-// test([1, 2, 3], 4) |> console.log;
-// test([0, 3, 5], 1) |> console.log;
-// test([-1, -3], 1) |> console.log;
-// test([8, -1, 7], 1) |> console.log;
+const benchmarkTestCase = {
+  // A big array, which won't eject with 1.
+  input: Array.from({ length: 456789 }, (_, i) => i - 123),
+  validate_with: 456789 - 123,
+};
+
+const unitTestCases = [
+  {
+    input: [1, 3, 6, 4, 1, 2],
+    validate_with: 5,
+  },
+  {
+    input: [1, 2, 3],
+    validate_with: 4,
+  },
+  {
+    input: [0, 3, 5],
+    validate_with: 1,
+  },
+  {
+    input: [-1, -3],
+    validate_with: 1,
+  },
+  {
+    input: [8, -1, 7],
+    validate_with: 1,
+  },
+  {
+    // A bigger array, starting at 20.
+    input: Array.from({ length: 1000 }, (_, i) => i + 20),
+    validate_with: 1,
+  },
+  benchmarkTestCase,
+];
+
+// Runs all solutions using multiple test cases.
+runUnitTests(unitTestCases);
+
+// Runs all solutions using a single test case.
+runBenchmark(benchmarkTestCase);

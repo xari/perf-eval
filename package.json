@@ -2,10 +2,10 @@
   "name": "perf-eval",
   "type": "module",
   "version": "1.0.0",
-  "description": "Performance evaluation of several working solutions to a Codility test",
+  "description": "Performance evaluation of different approaches to a dev interview challenge.",
   "private": true,
   "scripts": {
-    "test": "node ./index.js"
+    "test": "node './solutions.test.js'"
   },
   "repository": {
     "type": "git",
@@ -18,11 +18,10 @@
     "url": "https://github.com/xari/perf-eval/issues"
   },
   "homepage": "https://github.com/xari/perf-eval#readme",
-  "devDependencies": {
-    "jest": "^24.9.0"
-  },
+  "devDependencies": {},
   "dependencies": {
     "benchmark": "^2.1.4",
+    "chalk": "^4.1.2",
     "node": "^16.10.0"
   }
 }
