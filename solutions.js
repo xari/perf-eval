@@ -32,6 +32,8 @@ function solution_forEach(A) {
   return x;
 }
 
+// This solution was taken from the StackOverflow answer below:
+// https://stackoverflow.com/a/56969919
 function solution_for(A) {
   A = A.filter((x) => x >= 1).sort((a, b) => a - b);
 
@@ -48,8 +50,6 @@ function solution_for(A) {
   return x;
 }
 
-// This solution was taken from the StackOverflow answer below:
-// https://stackoverflow.com/a/56969919
 function solution_for_of(A) {
   A = A.filter((x) => x >= 1).sort((a, b) => a - b);
 
