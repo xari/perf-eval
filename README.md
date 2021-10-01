@@ -46,4 +46,31 @@ The benchmark below uses the same array as the one above, but this time it start
 > According to the benchmark, the most performant solution seems to be the solution_for_of.
 ```
 
-Interestingly, providing the early `return` in the `solution_reduce_with_eject` seems to have lowered the overall performance of this function vs. the simple `reduce`-based solution that doesn't offer the early `return`.
+Interestingly, providing the early `return` in the `solution_reduce_with_eject` seems to have lowered the overall performance of this function vs. the simple `reduce`-based solution that doesn't offer the early `return`, shown below.
+
+```js
+function solution_reduce(A) {
+  return A.filter((n) => n > 0)
+    .sort((a, b) => a - b)
+    .reduce((prev, n, i) => (n === prev ? n + 1 : prev), 1);
+}
+```
+
+`for...of` certainly helps to clean-up the syntax of a typical `for` loop, but without game-chainging performance gains, I prefer the functional approach, which avoids creating an incrementor variable (see `x` below), and extends the neat method-chaining that is already being used to `filter()` and `sort()` the array.
+
+```js
+function solution_for_of(A) {
+  A = A.filter((x) => x >= 1).sort((a, b) => a - b);
+
+  let x = 1;
+
+  for (const n of A) {
+    if (x < n) {
+      return x;
+    }
+    x = n + 1;
+  }
+
+  return x;
+}
+```
