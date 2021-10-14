@@ -22,6 +22,8 @@
   "dependencies": {
     "benchmark": "^2.1.4",
     "chalk": "^4.1.2",
+    "fluture": "^14.0.0",
+    "lodash": "^4.17.21",
     "node": "^16.10.0"
   }
 }

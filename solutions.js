@@ -363,3 +363,35 @@ export function count_inversions_merge(A) {
 
   return inversionCount > 1000000000 ? -1 : inversionCount;
 }
+
+// const lodash = require("lodash")
+//
+// const handleJSON = lodash.throttle((jsonString, saveToFile) => {
+//     let {username, filename, ...restJSON} = JSON.parse(jsonString);
+//
+//     if (username && username.length) username = username.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g,"_");
+//     if (filename && filename.length) filename = filename.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g,"_");
+//
+//     return username.length && filename.length
+//     ? saveToFile(username, filename, JSON.stringify(restJSON))
+//     : null;
+// }, 1000);
+
+// module.exports = handleJSON
+
+export function solution(S) {
+  const balloon = Array.from("BALLOON");
+
+  let letters = Array.from(S.toUpperCase()); // Added case coercion... just in case ;-D
+  let i = 0;
+
+  while (balloon.every((letter) => letters.includes(letter))) {
+    for (let j = 0; j < balloon.length; j++) {
+      letters.splice(letters.indexOf(balloon[j]), 1); // Originally forgot the [j]
+    }
+
+    i++;
+  }
+
+  return i;
+}
