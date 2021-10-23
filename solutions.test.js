@@ -8,43 +8,54 @@ import {
   find_missing_int_for_of,
 } from "./solutions.js";
 
-// Returns the input if the test doesn't pass.
-const expect = (fn, assert, ...inputs) => {
-  const result = fn(...inputs);
+// A transducer takes a reducer and returns a reducer...
+// Gets the results of the running each function in the fn array against the provided assertion values.
+// ... and then passes them along to the next reducer, whatever it may be...
+// Remember: the accumulator values will be in the form that the deepest nested reducer returns them in.
+const getResultsTransducer = (nextReducer) => (acc, cur) => {
+  const { fn, assert, input } = cur;
 
-  return result === assert ? true : result;
+  const results = fn.map((x) => {
+    const result = x(input) === assert ? true : x(input);
+    const pass = result === true ? true : false;
+
+    return {
+      name: x.name,
+      pass,
+      results: [
+        {
+          assert,
+          input,
+          result,
+        },
+      ],
+    };
+  });
+
+  // Always consider what the next reducer should exepct as a current value.
+  // Very important! Remember to pass-on the accumulator as well!
+  return nextReducer(acc, results);
 };
 
-// Runs the tests, and returns an object.
-const test = ({ fn, assert, input }) =>
-  fn.map((x) => ({
-    name: x.name,
-    input: input,
-    expected: assert,
-    result: expect(x, assert, input),
-  }));
+// Shortens the array of results by combining results from testing the same functions more than once.
+const condenseResultsTransducer = (nextReducer) => (acc, cur) => {
+  // set intialValue to the accumulator
+  const condencedResults = cur.reduce((x, y) => {
+    const { name, pass, results } = y;
+    const existing = acc.findIndex((x) => x.name === name);
 
-const reduceResults = (acc, { name, result, ...rest }) => {
-  const existingPass = acc.pass.findIndex((testCase) => testCase.name === name);
-  const existingFail = acc.fail.findIndex((testCase) => testCase.name === name);
+    return existing !== -1
+      ? [
+          ...x.slice(0, existing),
+          Object.assign(x[existing], {
+            results: x[existing].results.concat(results),
+          }),
+          ...x.slice(existing + 1),
+        ]
+      : x.concat({ name, pass, results });
+  }, acc);
 
-  // true == the test passed
-  if (result === true && existingFail === -1) {
-    existingPass !== -1
-      ? acc.pass.splice(existingPass, 1, { name })
-      : acc.pass.push({ name });
-  } else {
-    if (existingPass !== -1) acc.pass.splice(existingPass, 1);
-
-    existingFail !== -1
-      ? acc.fail.splice(existingFail, 1, {
-          name,
-          details: [...acc.fail[existingFail].details, { result, ...rest }],
-        })
-      : acc.fail.push({ name, details: [{ result, ...rest }] });
-  }
-
-  return acc;
+  return nextReducer(condencedResults, cur);
 };
 
 const find_missing_int = [
@@ -73,6 +84,11 @@ const testCases = [
     assert: 4,
     input: [1, 2, 3],
   },
+  // {
+  //     fn: [() => null],
+  //     assert: 1,
+  //     input: 2,
+  //   },
   {
     fn: find_missing_int,
     assert: 1,
@@ -97,39 +113,51 @@ const testCases = [
   benchmark_find_missing_int,
 ];
 
-const results = testCases.flatMap(test).reduce(reduceResults, {
-  pass: [],
-  fail: [],
-});
+// Takes a function to pass the accumulator to... Maybe this is unnecessary....
+const foldReducer = (acc, cur) => {
+  return acc;
+};
 
-results.pass.forEach(({ name }) =>
-  console.log(chalk.green(`All clear for ${name}`))
+// Will tell us which functions pass or fail, and the results vs. expectations for each.
+const results = testCases.reduce(
+  // get the results
+  getResultsTransducer(
+    // pivot longer
+    condenseResultsTransducer(
+      // fold it down
+      foldReducer
+    )
+  ),
+  []
 );
 
-results.fail.forEach(({ name, details }) => {
-  console.error(
-    `Something isn't right with ${chalk.blue.bgWhite.bold(name)}.`,
-    `\n It failed under the following conditions:`,
-    chalk.red(
-      details.map(
-        ({ input, expected, result }) =>
-          `\n When testing with ${chalk.cyan.bgWhite(
-            input
-          )}, expected ${chalk.green.bgWhite(
-            expected
-          )}, but returned ${chalk.red.bgWhite(result)}`
-      )
-    )
+results.forEach(({ name, pass, results }) => {
+  console.log(
+    pass
+      ? chalk.green(`All clear for ${name}`)
+      : console.error(
+          `Something isn't right with ${chalk.blue.bgWhite.bold(name)}.`,
+          `\n It failed under the following conditions:`,
+          chalk.red(
+            results.map(({ assert, input, result }) =>
+              result !== true
+                ? `\n When testing with ${chalk.cyan.bgWhite(
+                    input
+                  )}, expected ${chalk.green.bgWhite(
+                    expected
+                  )}, but returned ${chalk.red.bgWhite(result)}`
+                : null
+            )
+          )
+        )
   );
 });
 
 // Runs all solutions using a single large array test case.
-const initBenchmark = ({ fn, assert, input }) => {
+const initBenchmark = ({ fn, input }) => {
   const benchmark = new Benchmark.Suite();
 
-  fn.forEach((solution) =>
-    benchmark.add(solution.name, () => expect(solution, assert, input))
-  );
+  fn.forEach((solution) => benchmark.add(solution.name, () => solution(input)));
 
   return benchmark;
 };
