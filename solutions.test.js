@@ -35,7 +35,7 @@ const testCases = [
   //     assert: 1,
   //     input: Array.from({ length: 1000 }, (_, i) => i + 20),
   //   },
-  // benchmark_find_missing_int,
+  benchmark_find_missing_int,
 ];
 
 const getResult = (fn, { assert, input }) => {
