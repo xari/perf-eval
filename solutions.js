@@ -60,7 +60,7 @@ export function es6_reduce(A) {
 // if the first element is greater than 1.
 export function es6_reduce_eject(A) {
   return A.sort((a, b) => a - b).reduce((prev, n, i, arr) => {
-    if (arr[0] > 1) arr.splice(1);
+    arr[0] > 1 && arr.splice(1);
 
     return n > 0 ? (n === prev ? n + 1 : prev) : prev;
   }, 1);
